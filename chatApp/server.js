@@ -38,16 +38,19 @@ socio.on('connection',(soc)=>{
      //Listen to the chat message
      soc.on('chatMessage',(msg)=>{
         const user = getCurrentUser(soc.id);
-        socio.to(user.room).emit('message',formatMessage(user.userName,msg));
+        socio.to(user.room).emit('message',formatMessage(user.username,msg));
     });
 
 
     //notify when  the use is disconnected
     soc.on('disconnect',()=>{
+        console.log('disconnect called');
         const user = userLeave(soc.id);
         if(user)
         {
+            
             soc.broadcast.to(user.room).emit('message',formatMessage(chatBot,`${user.username} has left the chat`));
+            console.log('Message Emitted');
 
             socio.to(user.room)
             .emit('roomUsers',{users : getUsersForRoom(user.room),room:user.room});
